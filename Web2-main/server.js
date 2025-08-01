@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const fs = require('fs');
+const PORT = 3000;
+
+app.use(cors());
 
 const readusuarios = () => {
     const data = fs.readFileSync('./usuarios.json');
@@ -62,6 +65,8 @@ app.post('/usuarios', (req, res) => {
     usuarios.push(novoUsuario);
     writeUsuarios(usuarios);
     res.status(201).json(novoUsuario);
+
+    
 });
 
 
