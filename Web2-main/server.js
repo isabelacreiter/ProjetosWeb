@@ -1,78 +1,60 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-const fs = require('fs');
-const cors = require('cors');
-
-app.use(cors());
+const express = require('express')
+const fs = require('fs')
+const cors = require('cors')
+const app = express()
+const PORT = 3000
 
 const readUsuarios = () => {
-    try {
-        const data = fs.readFileSync('./usuarios.json');
-        return JSON.parse(data);
-    } catch (err) {
-        return [];
-    }
+    const dados = fs.readFileSync('./usuarios.json')
+    return JSON.parse(dados)
 }
 
-const writeUsuarios = (usuarios) => {
-    fs.writeFileSync('./usuarios.json', JSON.stringify(usuarios, null, 2));
+const writeUsuarios = (dados) => {
+    fs.writeFileSync('./usuarios.json', JSON.stringify(dados, null, 2))
 }
 
-app.use(express.json());
+app.use(cors())
+app.use(express.json())
 
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
-});
+app.listen(PORT, () => {
+    console.log("Servidor rodando na porta 3000")
+})
 
 app.get('/', (req, res) => {
-  res.send('SERVIDOR NODE JS + Express rodando');
-});
+   res.send("Servidor NODE JS + Express está rodando") 
+})
 
 app.get('/usuarios', (req, res) => {
-  const usuarios = readUsuarios();
-  res.json(usuarios);
-});
+    const usuarios = readUsuarios()
+    res.json(usuarios) 
+ })
 
 app.get('/usuarios/:id', (req, res) => {
-    const usuarios = readUsuarios();
-    const id = parseInt(req.params.id);
-    const usuario = usuarios.find(u => u.id === id);
+    const usuarios = readUsuarios()
+    const id = parseInt(req.params.id)
+    const usuario = usuarios.find(u => u.id === id)
     if (usuario) {
-        res.json(usuario);
+        res.json(usuario)
     } else {
-        res.status(404).send('Usuário não encontrado');
+        res.status(404).json({mensagem: 'Usuário não encontrado'})
     }
-});
-
-app.delete('/usuarios/:id', (req, res) => {
-    const usuarios = readUsuarios();
-    const id = parseInt(req.params.id);
-    const usuario = usuarios.find(u => u.id === id);
-    if (!usuario) {
-        return res.status(404).send('Usuário não encontrado');
-    }
-    const usuariosAtualizados = usuarios.filter(u => u.id !== id);
-    writeUsuarios(usuariosAtualizados);
-    res.json({ message: `Usuário com id ${id} deletado com sucesso!` });
-});
+})
 
 app.post('/usuarios', (req, res) => {
-    const usuarios = readUsuarios();
-    const novoUsuario = {
-        id: usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1,
+    const usuarios = readUsuarios()
+    const novo_usuario = {
+        id: usuarios.length > 0 ? usuarios[usuarios.length -1].id + 1 : 1,
         nome: req.body.nome
     }
+    usuarios.push(novo_usuario)
+    writeUsuarios(usuarios)
+    res.status(201).json(novo_usuario)
+})
 
-    usuarios.push(novoUsuario);
-    writeUsuarios(usuarios);
-    res.status(201).json(novoUsuario);
-});
-
-
-
-
-
-
-
-
+app.delete('/usuarios/:id', (req, res) => {
+    let usuarios = readUsuarios()
+    const id = parseInt(req.params.id)
+    usuarios = usuarios.filter(usuarios => usuarios.id !== id)
+    writeUsuarios(usuarios)
+    res.json({mesagem: `Usuario ${id} deletado com sucesso`})
+})

@@ -11,9 +11,7 @@ export default function UsuariosForm({ onUsuarioAdicionado }) {
       await axios.post('http://localhost:3000/usuarios', { nome });
       setMensagem('Usuário salvo com sucesso!');
       setNome('');
-      if (onUsuarioAdicionado) {
-        onUsuarioAdicionado(); // Remova o setTimeout
-      }
+      if (onUsuarioAdicionado) onUsuarioAdicionado();
     } catch (error) {
       setMensagem('Erro ao salvar usuário.');
       console.error('Erro ao salvar usuário:', error);
