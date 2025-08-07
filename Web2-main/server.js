@@ -56,5 +56,4 @@ app.delete('/usuarios/:id', (req, res) => {
     const id = parseInt(req.params.id)
     usuarios = usuarios.filter(usuarios => usuarios.id !== id)
     writeUsuarios(usuarios)
-    res.json({mesagem: `Usuario ${id} deletado com sucesso`})
 })
